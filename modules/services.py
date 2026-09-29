@@ -151,3 +151,58 @@ class ExpenseService:
                    f"of {budget.limit:,.2f} for {expense.month}")
         log.warning(message)
         return message
+
+    # ------------------------------------------------------------------
+    # Module 3: reports and analytics
+    # ------------------------------------------------------------------
+    def monthly_summary(self, month=""):
+        """Statistics for one month, or None when there is no data.
+
+        Uses NumPy for the numeric statistics and itertools.groupby to
+        group expenses by category.
+        """
+        month = parse_month(month)
+        items = self.list_expenses(month)
+        if not items:
+            return None
+
+        amounts = np.array([e.amount for e in items], dtype=float)
+        total = float(amounts.sum())
+
+        by_category = sorted(items, key=lambda e: e.category)
+        breakdown = []
+        for category, group in groupby(by_category, key=lambda e: e.category):
+            group_total = round(sum(e.amount for e in group), 2)
+            breakdown.append((category, group_total, group_total / total * 100))
+        breakdown.sort(key=lambda row: row[1], reverse=True)
+
+        return {
+            "month": month,
+            "count": len(items),
+            "total": round(total, 2),
+            "mean": round(float(amounts.mean()), 2),
+            "median": round(float(np.median(amounts)), 2),
+            "max": round(float(amounts.max()), 2),
+            "min": round(float(amounts.min()), 2),
+            "std": round(float(amounts.std()), 2),
+            "largest": max(items, key=lambda e: e.amount),
+            "breakdown": breakdown,
+        }
+
+    def monthly_trend(self):
+        """Return [(month, total)] across all data, oldest first."""
+        items = sorted(self._expenses, key=lambda e: e.month)
+        return [(month, round(sum(e.amount for e in group), 2))
+                for month, group in groupby(items, key=lambda e: e.month)]
+
+    def top_categories(self, month="", n=3):
+        """The n categories with the highest spending in a month."""
+        spent = self.spent_by_category(parse_month(month))
+        return sorted(spent.items(), key=lambda pair: pair[1], reverse=True)[:n]
+
+    def export_csv(self, filename="expenses.csv"):
+        """Export every expense to CSV and return the file path."""
+        clean = clean_text(filename, "File name", 40)
+        if not clean.lower().endswith(".csv"):
+            clean += ".csv"
+        return storage.export_csv(self._expenses, clean)
