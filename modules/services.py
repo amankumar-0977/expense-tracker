@@ -99,3 +99,55 @@ class ExpenseService:
                 continue
             results.append(e)
         return results
+
+    # ------------------------------------------------------------------
+    # Module 2: budgets and alerts
+    # ------------------------------------------------------------------
+    def set_budget(self, category, limit):
+        """Create or replace the monthly budget for a category."""
+        budget = Budget(category, limit)
+        self._budgets[budget.category] = budget
+        self._save()
+        log.info("Budget set: %s = %s", budget.category, budget.limit)
+        return budget
+
+    def remove_budget(self, category):
+        key = clean_text(category, "Category", 25).title()
+        if key not in self._budgets:
+            raise NotFoundError(f"No budget set for '{key}'")
+        del self._budgets[key]
+        self._save()
+        log.info("Budget removed: %s", key)
+
+    def spent_by_category(self, month):
+        """Return {category: total spent} for a month."""
+        totals = {}
+        for e in self.list_expenses(month):
+            totals[e.category] = totals.get(e.category, 0.0) + e.amount
+        return {cat: round(total, 2) for cat, total in totals.items()}
+
+    def budget_report(self, month=""):
+        """List of (Budget, spent, fraction_used, status) for the given month."""
+        month = parse_month(month)
+        spent = self.spent_by_category(month)
+        rows = []
+        for category in sorted(self._budgets):
+            budget = self._budgets[category]
+            used = spent.get(category, 0.0)
+            rows.append((budget, used, Budget.usage(used, budget.limit),
+                         budget.status(used)))
+        return rows
+
+    def check_alert(self, expense):
+        """Return a warning message if this expense pushes its category to a limit."""
+        budget = self._budgets.get(expense.category)
+        if budget is None:
+            return None
+        spent = self.spent_by_category(expense.month).get(expense.category, 0.0)
+        status = budget.status(spent)
+        if status == "OK":
+            return None
+        message = (f"{status}: {expense.category} spending is {spent:,.2f} "
+                   f"of {budget.limit:,.2f} for {expense.month}")
+        log.warning(message)
+        return message
