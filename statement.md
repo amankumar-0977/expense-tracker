@@ -1,23 +1,37 @@
 # Problem Statement
 
-## Problem
-Students and young professionals often lose track of where their money goes. Spreadsheets are
-tedious to maintain, and most apps are heavy, need accounts, or hide the data. There is a need
-for a lightweight, offline tool that records expenses quickly, warns when spending crosses a
-budget, and turns raw entries into clear monthly summaries.
+## Problem Statement
 
-## Scope
-- A command-line application written in pure Python (NumPy for calculations).
-- Local JSON storage; no network, accounts, or external services.
-- Single-user, single-currency (amounts are plain numbers).
-- Out of scope: bank integration, GUI/web front-end, multi-user support.
+People who track spending on paper, in memory or in scattered notes struggle to know how much they have spent, in which category, and whether they are staying within their limits. Spreadsheets are flexible but slow for quick daily entry, and many apps need accounts, internet access or store financial data online. There is a need for a **simple, offline, fast tool** that records expenses, warns about overspending and turns raw entries into meaningful statistics.
+
+## Scope of the Project
+
+**In scope**
+- A command-line application built with Python (standard library only)
+- Create, view, edit, delete and search expenses
+- Recurring expense marking (weekly / monthly / yearly)
+- Monthly category budgets with overspending alerts
+- Monthly statistical report and month-over-month trend
+- Local JSON storage and CSV export
+- Input validation, error handling and logging
+
+**Out of scope**
+- Graphical or web interface
+- Multi-user accounts, login or cloud sync
+- Automatic bank/UPI import and currency conversion
+- Automatic creation of recurring expenses on schedule
 
 ## Target Users
-- Students managing a monthly allowance.
-- Individuals who want a simple personal expense log without installing large apps.
+
+- Students managing a monthly allowance
+- Young professionals who want a quick daily expense log
+- Anyone who prefers a private, offline tool with no sign-up
+- Beginners who want to study a modular Python project
 
 ## High-Level Features
-1. **Expense management (CRUD):** add, view, edit, delete and search expenses; recurring expenses supported.
-2. **Budgets & alerts:** set a monthly budget per category and get warnings at 80% and 100% usage.
-3. **Reports & analytics:** monthly summary, category breakdown with percentages, statistics (mean, median, max), top categories, and CSV export.
-4. **Reliability:** input validation, safe file writes with automatic backup, and activity logging.
+
+1. Expense management (add, view, edit, delete, search)
+2. Budget management and alerts
+3. Analytics: monthly report and spending trend
+4. Data export (CSV) and persistent JSON storage
+5. Reliable error handling and logging
