@@ -61,7 +61,7 @@ python main.py
 To use a separate data file (for example while experimenting): `python main.py --data demo.json`
 
 ## Testing
-Run the program and try the cases below (the same cases appear in `screenshots/08_validation_and_errors.png`).
+Run the program and try the cases below (the same cases appear in `screenshots/07_validations_and_errors.png`).
 
 | # | Action | Input | Expected result |
 |---|---|---|---|
@@ -81,10 +81,11 @@ Check `logs/app.log` afterwards to see every action and error that was logged.
 ## Screenshots
 | | |
 |---|---|
-| ![Menu](screenshots/01_main_menu.png) | ![View](screenshots/02_view_expenses.png) |
-| ![Alert](screenshots/03_add_expense_budget_alert.png) | ![Search](screenshots/04_search.png) |
-| ![Budgets](screenshots/05_budget_status.png) | ![Report](screenshots/06_monthly_report.png) |
-| ![Trend](screenshots/07_spending_trend.png) | ![Errors](screenshots/08_validation_and_errors.png) |
+| ![Main menu](screenshots/01_main_menu.png) | ![View expenses](screenshots/02_view_expenses.png) |
+| ![Search expenses](screenshots/03_search_expenses.png) | ![Set a budget](screenshots/04_set_budget.png) |
+| ![Budget status](screenshots/05_budget_status.png) | ![Spending trend](screenshots/06_spending_trend.png) |
+| ![Validation and errors](screenshots/07_validations_and_errors.png) | |
+
 
 ## Future enhancements
 Charts with matplotlib, income tracking, automatic creation of recurring entries, and a simple GUI.
