@@ -1,90 +1,98 @@
 # Expense Tracker & Analyzer
 
-A lightweight, offline command-line application for recording personal expenses, watching
-category budgets and generating monthly reports. Built in Python as the **Build Your Own Project**
-for the *Python Essentials* course (VITyarthi).
-
-## Overview
-Most people do not know where their money goes each month. This tool lets you log expenses in
-seconds, warns you when a category budget is close to (or over) its limit, and turns the raw
-entries into statistics, category breakdowns and trends. All data stays in a local JSON file.
-
-See [statement.md](statement.md) for the full problem statement, scope and target users.
+A command-line application for recording personal expenses, setting category budgets, and analysing spending patterns. Built in Python as the *Build Your Own Project* for the VITyarthi **Python Essentials** course.
 
 ## Features
-**1. Expense management** - add, view, edit, delete and search expenses; recurring expenses (weekly / monthly / yearly).
-**2. Budgets & alerts** - monthly limit per category; a WARNING at 80% and EXCEEDED above 100%, shown instantly when you add an expense; text progress bars in the budget status view.
-**3. Reports & analytics** - monthly summary (total, mean, median, min/max, standard deviation, largest expense), category breakdown with percentages, month-by-month spending trend and CSV export.
 
-### Non-functional requirements
-| Requirement | How it is met |
-|---|---|
-| Reliability | Atomic writes (temp file then replace) and a `.bak` backup on every save; a damaged data file is preserved as `.corrupt` and the app reports it instead of crashing |
-| Usability | Numbered menu, clear prompts, friendly error messages, blank input = sensible default, confirmation before delete |
-| Error handling | Validation on every input; custom exceptions (`ValidationError`, `NotFoundError`, `StorageError`); a last-resort handler so the menu never crashes |
-| Logging | Every action, warning and error is written to `logs/app.log` |
-| Maintainability | Small modules with one responsibility each: models, storage, services, utils; docstrings and comments throughout |
+- **Expense management:** add, view, edit, delete, and search expenses (by keyword, category, and amount range)
+- **Recurring expenses:** mark an expense as weekly, monthly, or yearly
+- **Budgets and alerts:** set a monthly limit per category, see a progress bar for each budget, and get a warning when an expense pushes a category over its limit
+- **Monthly report:** transaction count, total, mean, median, min/max, standard deviation, largest expense, and a per-category percentage breakdown
+- **Spending trend:** month-by-month totals shown as a text bar chart
+- **CSV export:** save all expenses to a CSV file for use in Excel or Google Sheets
+- **Persistent storage:** data is saved in a JSON file between runs
+- **Robust input handling:** invalid input shows a friendly message instead of crashing, and unexpected errors are written to a log
 
-## Technologies used
-- Python 3.9+ (standard library: `json`, `csv`, `logging`, `argparse`, `itertools`, `datetime`)
-- NumPy (statistics)
-- Git / GitHub (version control)
+## Project Structure
 
-Python concepts from the course that are applied: data types and operators, string formatting,
-lists / dicts / sets, control flow, functions (including `*args`-style flexible arguments via `**changes`),
-modules and packages, `itertools.groupby`, NumPy arrays, and OOP (classes, encapsulation with
-properties, inheritance, method overriding, operator overloading, class and static methods).
-
-## Project structure
 ```
 expense-tracker/
-├── README.md
-├── statement.md
-├── main.py              # menu and user interaction
-├── requirements.txt
-├── screenshots/         # program output
+├── README.md          # this file
+├── statement.md       # problem statement, scope, and requirements
+├── main.py            # command-line entry point (menu and user interaction)
+├── screenshots/       # screenshots of the program running
 └── modules/
-    ├── models.py        # Expense, RecurringExpense, Budget
-    ├── services.py      # expense CRUD, budgets/alerts, reports
-    ├── storage.py       # JSON persistence, backup, CSV export
-    └── utils.py         # logger, validators, formatting
+    ├── storage.py     # reading/writing the JSON data file
+    ├── services.py    # business logic: expenses, budgets, reports, export
+    └── utils.py       # validation, parsing, formatting, logging helpers
 ```
-`data/`, `logs/` and `exports/` are created automatically on first use and are not tracked by Git.
 
-## Install & run
+## Requirements
+
+- Python 3.8 or newer
+- No third-party packages (standard library only)
+
+## How to Run
+
 ```bash
+# clone the repository
 git clone <your-repository-url>
 cd expense-tracker
-pip install -r requirements.txt
+
+# run with the default data file (data/expenses.json)
 python main.py
+
+# or use a different data file
+python main.py --data my_expenses.json
 ```
-To use a separate data file (for example while experimenting): `python main.py --data demo.json`
 
-## Testing
-Run the program and try the cases below (the same cases appear in `screenshots/08_validation_and_errors.png`).
+## Menu
 
-| # | Action | Input | Expected result |
-|---|---|---|---|
-| 1 | Add expense | amount `abc` | `Error: Amount must be a number` |
-| 2 | Add expense | amount `-5` | `Error: Amount must be greater than zero` |
-| 3 | Add expense | empty category | `Error: Category cannot be empty` |
-| 4 | Add expense | date `2026-13-45` | `Error: Date must be in YYYY-MM-DD format` |
-| 5 | Add recurring expense | frequency `daily` | `Error: Frequency must be weekly, monthly or yearly` |
-| 6 | Delete expense | id `99` (not present) | `Error: No expense with id 99` |
-| 7 | Main menu | option `11` | `Invalid choice` message, menu shown again |
-| 8 | Budget alert | Food budget 3000, then add Food expenses beyond it | `WARNING` at 80%, `EXCEEDED` above 100% |
-| 9 | Corrupt data | replace `data/expenses.json` with `{ not json` and start the app | "Data file is damaged" message; a `.corrupt` copy is kept |
-| 10 | Report | month with no data | "No expenses recorded" message |
+```
+ 1. Add expense            6. Set category budget
+ 2. View expenses          7. Budget status
+ 3. Edit expense           8. Monthly report
+ 4. Delete expense         9. Spending trend
+ 5. Search expenses       10. Export to CSV
+                           0. Exit
+```
 
-Check `logs/app.log` afterwards to see every action and error that was logged.
+## Example Session
 
-## Screenshots
-| | |
-|---|---|
-| ![Menu](screenshots/01_main_menu.png) | ![View](screenshots/02_view_expenses.png) |
-| ![Alert](screenshots/03_add_expense_budget_alert.png) | ![Search](screenshots/04_search.png) |
-| ![Budgets](screenshots/05_budget_status.png) | ![Report](screenshots/06_monthly_report.png) |
-| ![Trend](screenshots/07_spending_trend.png) | ![Errors](screenshots/08_validation_and_errors.png) |
+```
+Choose an option: 1
+Amount: 450
+Category (e.g. Food, Travel): Food
+Description (optional): Lunch with friends
+Date YYYY-MM-DD (blank = today):
+Recurring? (y/N): n
+Saved -> 1     2026-09-30  Food                450  Lunch with friends
+```
 
-## Future enhancements
-Charts with matplotlib, income tracking, automatic creation of recurring entries, and a simple GUI.
+Screenshots are added in the `screenshots/` folder to show each menu option in use.
+
+## Design Overview
+
+The program is split into three layers so each part has one job:
+
+| Layer | File | Responsibility |
+|-------|------|----------------|
+| Interface | `main.py` | Shows the menu, reads input, prints results, catches errors |
+| Logic | `modules/services.py` | Rules for expenses, budgets, statistics, trends, and CSV export |
+| Data | `modules/storage.py` | Loading and saving the JSON file |
+| Helpers | `modules/utils.py` | Input validation, month/amount parsing, money formatting, progress bars, logger |
+
+Errors are raised as specific exceptions (`ValidationError`, `NotFoundError`, `StorageError`) in the lower layers and handled in one place in `main.py`, so the menu keeps running after a bad input.
+
+## Python Concepts Used
+
+Functions and modules, dictionaries and lists, classes and objects (OOP), exception handling, file I/O (JSON and CSV), string formatting, command-line arguments with `argparse`, and basic statistics (mean, median, standard deviation).
+
+## Author
+
+Aman Kumar
+Reg. No. 26BCE10228
+VITyarthi, Python Essentials
+
+
+
