@@ -89,3 +89,8 @@ Check `logs/app.log` afterwards to see every action and error that was logged.
 
 ## Future enhancements
 Charts with matplotlib, income tracking, automatic creation of recurring entries, and a simple GUI.
+
+## Author
+Aman Kumar
+26BCE10228
+Python Essentials, VITyarthi
